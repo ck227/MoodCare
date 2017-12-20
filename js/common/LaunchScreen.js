@@ -45,7 +45,7 @@ class LaunchScreen extends React.Component {
                 </View>
             )
         } else {
-            return <LoginScreen/>
+            return <LoginScreen />
         }
 
     }
