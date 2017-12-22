@@ -24,7 +24,7 @@
 
 import type { Action } from "./types";
 
-type Tab = "schedule" | "myF8" | "demos" | "videos" | "info";
+type Tab = "首页" | "文章" | "广场" | "我的";
 
 module.exports = {
   switchTab: (tab: Tab): Action => ({

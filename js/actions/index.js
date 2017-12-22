@@ -24,28 +24,28 @@
 
 "use strict";
 
-import * as parseActions from "./parse";
+// import * as parseActions from "./parse";
 import * as navigationActions from "./navigation";
 import * as loginActions from "./login";
-import * as scheduleActions from "./schedule";
-import * as filterActions from "./filter";
-import * as notificationActions from "./notifications";
-import * as configActions from "./config";
-import * as surveyActions from "./surveys";
-import * as testActions from "./test";
-import * as installationActions from "./installation";
-import * as videoActions from "./video";
+// import * as scheduleActions from "./schedule";
+// import * as filterActions from "./filter";
+// import * as notificationActions from "./notifications";
+// import * as configActions from "./config";
+// import * as surveyActions from "./surveys";
+// import * as testActions from "./test";
+// import * as installationActions from "./installation";
+// import * as videoActions from "./video";
 
 module.exports = {
   ...loginActions,
-  ...scheduleActions,
-  ...filterActions,
-  ...notificationActions,
-  ...configActions,
-  ...surveyActions,
-  ...testActions,
-  ...parseActions,
+  // ...scheduleActions,
+  // ...filterActions,
+  // ...notificationActions,
+  // ...configActions,
+  // ...surveyActions,
+  // ...testActions,
+  // ...parseActions,
   ...navigationActions,
-  ...installationActions,
-  ...videoActions
+  // ...installationActions,
+  // ...videoActions
 };

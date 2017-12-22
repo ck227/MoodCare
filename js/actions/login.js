@@ -22,14 +22,14 @@
 
 "use strict";
 
-import Parse from "parse/react-native";
-import FacebookSDK from "../FacebookSDK";
+// import Parse from "parse/react-native";
+// import FacebookSDK from "../FacebookSDK";
 import ActionSheetIOS from "ActionSheetIOS";
 import { Platform } from "react-native";
 import Alert from "Alert";
-import { restoreSchedule, loadFriendsSchedules } from "./schedule";
-import { updateInstallation } from "./installation";
-import { loadSurveys } from "./surveys";
+// import { restoreSchedule, loadFriendsSchedules } from "./schedule";
+// import { updateInstallation } from "./installation";
+// import { loadSurveys } from "./surveys";
 
 import type { Action, ThunkAction } from "./types";
 

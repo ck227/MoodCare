@@ -45,7 +45,7 @@ class LoginScreen extends React.Component {
                     defaultValue='1234556'
                 />
 
-                <LoginButton source="First screen" />
+                <LoginButton source="First screen"/>
             </View>
         );
     }
