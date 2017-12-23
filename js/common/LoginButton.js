@@ -61,7 +61,7 @@ class LoginButton extends React.Component {
 
         this.setState({isLoading: true});
         try {
-            await Promise.all([dispatch(logInWithFacebook(this.props.source))]);
+            await Promise.all([dispatch(logInWithPhone(this.props.source))]);
         } catch (e) {
             const message = e.message || e;
             if (message !== "Timed out" && message !== "Canceled by user") {

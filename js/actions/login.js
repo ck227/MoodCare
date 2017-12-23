@@ -24,119 +24,74 @@
 
 // import Parse from "parse/react-native";
 // import FacebookSDK from "../FacebookSDK";
-import ActionSheetIOS from "ActionSheetIOS";
-import { Platform } from "react-native";
+// import ActionSheetIOS from "ActionSheetIOS";
+import {Platform} from "react-native";
 import Alert from "Alert";
 // import { restoreSchedule, loadFriendsSchedules } from "./schedule";
 // import { updateInstallation } from "./installation";
 // import { loadSurveys } from "./surveys";
 
-import type { Action, ThunkAction } from "./types";
+// https://www.jianshu.com/p/a0ac68133eb1
 
-async function ParseFacebookLogin(scope): Promise {
-  return new Promise((resolve, reject) => {
-    Parse.FacebookUtils.logIn(scope, {
-      success: resolve,
-      error: (user, error) => reject((error && error.error) || error)
+import type {Action, ThunkAction} from "./types";
+
+async function ApiLogin(account: ?string, password: ?string): Promise {
+    return new Promise((resolve, reject) => {
+        // Parse.FacebookUtils.logIn(scope, {
+        //     success: resolve,
+        //     error: (user, error) => reject((error && error.error) || error)
+        // });
+        fetch(`http://118.190.43.124:8580/ycranetower/loginAct/login.html?loginName=${account}&password=${password}`)
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (responseData) {
+                resolve(responseData);
+            })
+            .catch(function (error) {
+                reject(error)
+            })
     });
-  });
 }
 
-async function queryFacebookAPI(path, ...args): Promise {
-  return new Promise((resolve, reject) => {
-    FacebookSDK.api(path, ...args, response => {
-      if (response && !response.error) {
-        resolve(response);
-      } else {
-        reject(response && response.error);
-      }
-    });
-  });
-}
 
-async function _logInWithFacebook(source: ?string): Promise<Array<Action>> {
-  await ParseFacebookLogin("public_profile,email,user_friends");
-  const profile = await queryFacebookAPI("/me", { fields: "name,email,link" });
+async function _logInWithPhone(account: ?string, password: ?string): Promise<Array<Action>> {
+    await ApiLogin(account,password);
+    const profile = await queryFacebookAPI("/me", {fields: "name,email,link"});
 
-  const user = await Parse.User.currentAsync();
-  user.set("facebook_id", profile.id);
-  user.set("name", profile.name);
-  user.set("email", profile.email);
-  user.set("link", profile.link);
-  await user.save();
-  await updateInstallation({ user });
+    const user = await Parse.User.currentAsync();
+    user.set("facebook_id", profile.id);
+    user.set("name", profile.name);
+    user.set("email", profile.email);
+    user.set("link", profile.link);
+    await user.save();
+    await updateInstallation({user});
 
-  const action = {
-    type: "LOGGED_IN",
-    source,
-    data: {
-      id: profile.id,
-      name: profile.name,
-      sharedSchedule: user.get("sharedSchedule")
-    }
-  };
-
-  return Promise.all([Promise.resolve(action), restoreSchedule()]);
-}
-
-function logInWithFacebook(source: ?string): ThunkAction {
-  return dispatch => {
-    const login = _logInWithFacebook(source);
-
-    // Loading friends schedules shouldn't block the login process
-    login.then(result => {
-      dispatch(result);
-      dispatch(loadFriendsSchedules());
-      dispatch(loadSurveys());
-    });
-    return login;
-  };
-}
-
-function skipLogin(): Action {
-  return {
-    type: "SKIPPED_LOGIN"
-  };
-}
-
-function logOut(): ThunkAction {
-  return dispatch => {
-    Parse.User.logOut();
-    FacebookSDK.logout();
-    updateInstallation({ user: null, channels: [] });
-
-    // TODO: Make sure reducers clear their state
-    return dispatch({
-      type: "LOGGED_OUT"
-    });
-  };
-}
-
-function logOutWithPrompt(): ThunkAction {
-  return (dispatch, getState) => {
-    let name = getState().user.name || "there";
-
-    if (Platform.OS === "ios") {
-      ActionSheetIOS.showActionSheetWithOptions(
-        {
-          title: `Hi, ${name}`,
-          options: ["Log out", "Cancel"],
-          destructiveButtonIndex: 0,
-          cancelButtonIndex: 1
-        },
-        buttonIndex => {
-          if (buttonIndex === 0) {
-            dispatch(logOut());
-          }
+    const action = {
+        type: "LOGGED_IN",
+        source,
+        data: {
+            id: profile.id,
+            name: profile.name,
+            sharedSchedule: user.get("sharedSchedule")
         }
-      );
-    } else {
-      Alert.alert(`Hi, ${name}`, "Log out from F8?", [
-        { text: "Cancel" },
-        { text: "Log out", onPress: () => dispatch(logOut()) }
-      ]);
-    }
-  };
+    };
+
+    return Promise.all([Promise.resolve(action), restoreSchedule()]);
 }
 
-module.exports = { logInWithFacebook, skipLogin, logOut, logOutWithPrompt };
+function logInWithPhone(account: ?string,password: ?string): ThunkAction {
+    return dispatch => {
+        const login = _logInWithPhone(account,password);
+
+        // Loading friends schedules shouldn't block the login process
+        login.then(result => {
+            dispatch(result);
+            // dispatch(loadFriendsSchedules());
+            // dispatch(loadSurveys());
+        });
+        return login;
+    };
+}
+
+module.exports = {logInWithPhone};
